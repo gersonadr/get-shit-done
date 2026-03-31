@@ -640,6 +640,16 @@ Each answer (or answer set, in batch mode) should reveal the next question or ne
 ```
 After all areas are auto-resolved, skip the "Explore more gray areas" prompt and proceed directly to write_context.
 
+**CRITICAL — Auto-mode pass cap:**
+In `--auto` mode, the discuss step MUST complete in a **single pass**. After writing CONTEXT.md once, you are DONE — proceed immediately to write_context and then auto_advance. Do NOT re-read your own CONTEXT.md to find "gaps", "undefined types", or "missing decisions" and run additional passes. This creates a self-feeding loop where each pass generates references that the next pass treats as gaps, consuming unbounded time and resources.
+
+Check the pass cap from config:
+```bash
+MAX_PASSES=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-get workflow.max_discuss_passes 2>/dev/null || echo "3")
+```
+
+If you have already written and committed CONTEXT.md, the discuss step is complete. Move on.
+
 **Interactive mode (no `--auto`):**
 
 **For each area:**

@@ -211,6 +211,9 @@ Proceed to 3b.
 
 **If SKIP_DISCUSS is `false` (or unset):** Execute the smart_discuss step for this phase.
 
+**IMPORTANT — Discuss must be single-pass in autonomous mode.**
+The discuss step in `--auto` mode MUST NOT loop. If CONTEXT.md already exists after discuss completes, do NOT re-invoke discuss for the same phase. The `has_context` check below is authoritative — once true, discuss is done for this phase regardless of perceived "gaps" in the context file.
+
 After smart_discuss completes, verify context was written:
 
 ```bash

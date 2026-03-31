@@ -410,8 +410,9 @@ export class PhaseRunner {
       const contextFiles = await this.contextEngine.resolveContextFiles(PhaseType.Discuss);
       let prompt = await this.promptFactory.buildPrompt(PhaseType.Discuss, null, contextFiles);
 
-      // Supplement with self-discuss instructions
-      prompt += '\n\n## Self-Discuss Mode\n\nYou are the AI discussing decisions with yourself. No human is present. Identify 3-5 gray areas in the project scope, reason through each one, make opinionated choices, and write CONTEXT.md with your decisions.';
+      // Supplement with self-discuss instructions with pass cap
+      const maxPasses = this.config.workflow.max_discuss_passes ?? 3;
+      prompt += `\n\n## Self-Discuss Mode\n\nYou are the AI discussing decisions with yourself. No human is present. Identify 3-5 gray areas in the project scope, reason through each one, make opinionated choices, and write CONTEXT.md with your decisions.\n\n**CRITICAL: Single-pass only.** You MUST complete all decisions in ONE pass and write CONTEXT.md once. Do NOT re-read your own CONTEXT.md to find "gaps" and do additional passes. The maximum allowed passes is ${maxPasses} — if you have already written CONTEXT.md, you are DONE. Proceed to the next workflow step. Self-referential gap-finding loops waste resources without adding value.`;
 
       planResult = await runPhaseStepSession(
         prompt,
