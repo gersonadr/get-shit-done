@@ -87,9 +87,8 @@ The installer prompts you to choose:
 
 Verify with:
 - Claude Code / Gemini / Copilot / Antigravity: `/gsd:help`
-- OpenCode: `/gsd-help`
+- OpenCode / Augment: `/gsd-help`
 - Codex: `$gsd-help`
-- Augment: `/gsd-help`
 
 > [!NOTE]
 > Codex installation uses skills (`skills/gsd-*/SKILL.md`) rather than custom prompts.
