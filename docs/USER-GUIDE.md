@@ -363,10 +363,11 @@ The `security.cjs` module scans for known injection patterns (role overrides, in
          │     └── Executor C (fresh 200K context) -> commit
          │
          └── Verifier
-               └── Check codebase against phase goals
-                     │
-                     ├── PASS -> VERIFICATION.md (success)
-                     └── FAIL -> Issues logged for /gsd-verify-work
+               ├── Check codebase against phase goals
+               ├── Test quality audit (disabled tests, circular patterns, assertion strength)
+               │
+               ├── PASS -> VERIFICATION.md (success)
+               └── FAIL -> Issues logged for /gsd-verify-work
 ```
 
 ### Brownfield Workflow (Existing Codebase)

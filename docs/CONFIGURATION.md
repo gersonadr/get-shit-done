@@ -328,6 +328,34 @@ Settings for the security enforcement feature (v1.31). All follow the **absent =
 
 ---
 
+## Manager Passthrough Flags
+
+Configure per-step flags that `/gsd-manager` appends to each dispatched command. This allows customizing how the manager runs discuss, plan, and execute steps without manual flag entry.
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `manager.flags.discuss` | string | (none) | Flags appended to discuss-phase commands (e.g., `"--auto"`) |
+| `manager.flags.plan` | string | (none) | Flags appended to plan-phase commands (e.g., `"--skip-research"`) |
+| `manager.flags.execute` | string | (none) | Flags appended to execute-phase commands (e.g., `"--validate"`) |
+
+**Example:**
+
+```json
+{
+  "manager": {
+    "flags": {
+      "discuss": "--auto",
+      "plan": "--skip-research",
+      "execute": "--validate"
+    }
+  }
+}
+```
+
+Invalid flag tokens are sanitized and logged as warnings. Only recognized GSD flags are passed through.
+
+---
+
 ## Model Profiles
 
 ### Profile Definitions

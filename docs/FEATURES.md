@@ -104,6 +104,9 @@
   - [Response Language Config](#83-response-language-config)
   - [Manual Update Procedure](#84-manual-update-procedure)
   - [New Runtime Support (Trae, Cline, Augment Code)](#85-new-runtime-support-trae-cline-augment-code)
+  - [Autonomous `--interactive` Flag](#86-autonomous---interactive-flag)
+  - [Commit-Docs Guard Hook](#87-commit-docs-guard-hook)
+  - [Community Hooks Opt-In](#88-community-hooks-opt-in)
 
 ---
 
@@ -1840,3 +1843,54 @@ Test suite that scans all agent, workflow, and command files for embedded inject
 - REQ-TRAE-01: Installer MUST support `--trae` flag for Trae IDE installation
 - REQ-CLINE-01: Installer MUST support Cline via `.clinerules` configuration
 - REQ-AUGMENT-01: Installer MUST support Augment Code with skill conversion and config management
+
+---
+
+### 86. Autonomous `--interactive` Flag
+
+**Flag:** `/gsd-autonomous --interactive`
+
+**Purpose:** Lean-context autonomous mode that keeps discuss-phase interactive (user answers questions) while dispatching plan and execute as background agents.
+
+**Requirements:**
+- REQ-INTERACT-01: `--interactive` MUST run discuss-phase inline with interactive questions (not auto-answered)
+- REQ-INTERACT-02: `--interactive` MUST dispatch plan-phase and execute-phase as background agents for context isolation
+- REQ-INTERACT-03: `--interactive` MUST enable pipeline parallelism — discuss Phase N+1 while Phase N builds
+- REQ-INTERACT-04: Main context MUST only accumulate discuss conversations (lean context)
+
+**Process:**
+1. **Discuss inline** — Run discuss-phase in the main context with user interaction
+2. **Dispatch** — Send plan and execute to background agents with fresh context windows
+3. **Pipeline** — While background agents build Phase N, begin discussing Phase N+1
+
+---
+
+### 87. Commit-Docs Guard Hook
+
+**Hook:** `gsd-commit-docs.js`
+
+**Purpose:** PreToolUse hook that enforces the `commit_docs` configuration, preventing `.planning/` files from being committed when `planning.commit_docs` is `false`.
+
+**Requirements:**
+- REQ-COMMITDOCS-01: Hook MUST intercept git commit commands that stage `.planning/` files
+- REQ-COMMITDOCS-02: Hook MUST block commits containing `.planning/` files when `commit_docs` is `false`
+- REQ-COMMITDOCS-03: Hook MUST be advisory — does not block when `commit_docs` is `true` or absent
+
+---
+
+### 88. Community Hooks Opt-In
+
+**Hooks:** `gsd-validate-commit.sh`, `gsd-session-state.sh`, `gsd-phase-boundary.sh`
+
+**Purpose:** Optional git and session hooks for GSD projects, gated behind `hooks.community: true` in config.
+
+**Requirements:**
+- REQ-COMMUNITY-01: All community hooks MUST be no-ops unless `hooks.community` is `true` in `.planning/config.json`
+- REQ-COMMUNITY-02: `gsd-validate-commit.sh` MUST enforce Conventional Commits format on git commit messages
+- REQ-COMMUNITY-03: `gsd-session-state.sh` MUST track session state transitions
+- REQ-COMMUNITY-04: `gsd-phase-boundary.sh` MUST enforce phase boundary checks
+
+**Config:**
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `hooks.community` | boolean | `false` | Enable optional community hooks for commit validation, session state, and phase boundaries |

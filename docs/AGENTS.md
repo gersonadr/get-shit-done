@@ -287,6 +287,7 @@ GSD uses a multi-agent architecture where thin orchestrators (workflow files) sp
 - PASS/FAIL with specific evidence
 - Logs issues for `/gsd-verify-work` to address
 - Milestone scope filtering: gaps addressed in later phases are marked as "deferred", not reported as failures (v1.32)
+- **Test quality audit** (v1.32): verifies that tests prove what they claim by checking for disabled/skipped tests on requirements, circular test patterns (system generating its own expected values), assertion strength (existence vs. value vs. behavioral), and expected value provenance. Blockers from test quality audit override an otherwise passing verification
 
 ---
 

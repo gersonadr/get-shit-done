@@ -506,9 +506,26 @@ Interactive command center for managing multiple phases from one terminal.
 - Recommends optimal next actions based on dependencies and progress
 - Dispatches work: discuss runs inline, plan/execute run as background agents
 - Designed for power users parallelizing work across phases from one terminal
+- Supports per-step passthrough flags via `manager.flags` config (see [Configuration](CONFIGURATION.md#manager-passthrough-flags))
 
 ```bash
 /gsd-manager                        # Open command center dashboard
+```
+
+**Manager Passthrough Flags:**
+
+Configure per-step flags in `.planning/config.json` under `manager.flags`. These flags are appended to each dispatched command:
+
+```json
+{
+  "manager": {
+    "flags": {
+      "discuss": "--auto",
+      "plan": "--skip-research",
+      "execute": "--validate"
+    }
+  }
+}
 ```
 
 ---
@@ -847,6 +864,7 @@ Cross-AI peer review of phase plans from external AI CLIs.
 | `--claude` | Include Claude CLI review (separate session) |
 | `--codex` | Include Codex CLI review |
 | `--coderabbit` | Include CodeRabbit review |
+| `--opencode` | Include OpenCode review (via GitHub Copilot) |
 | `--all` | Include all available CLIs |
 
 **Produces:** `{phase}-REVIEWS.md` — consumable by `/gsd-plan-phase --reviews`
@@ -1010,6 +1028,23 @@ node gsd-tools.cjs state planned-phase --phase 3 --plans 2
 ---
 
 ## Community Commands
+
+### Community Hooks
+
+Optional git and session hooks gated behind `hooks.community: true` in `.planning/config.json`. All are no-ops unless explicitly enabled.
+
+| Hook | Purpose |
+|------|---------|
+| `gsd-validate-commit.sh` | Enforce Conventional Commits format on git commit messages |
+| `gsd-session-state.sh` | Track session state transitions |
+| `gsd-phase-boundary.sh` | Enforce phase boundary checks |
+
+Enable with:
+```json
+{ "hooks": { "community": true } }
+```
+
+---
 
 ### `/gsd-join-discord`
 

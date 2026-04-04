@@ -148,6 +148,16 @@ Shared knowledge documents that workflows and agents `@-reference`:
 - `tdd.md` — Test-driven development integration patterns
 - `ui-brand.md` — Visual output formatting patterns
 
+### Modular Planner Decomposition
+
+The planner agent (`agents/gsd-planner.md`) was decomposed from a single monolithic file into a core agent plus reference modules to stay under the 50K character limit imposed by some runtimes. The planner now `@-references` specialized modules:
+
+- `planner-gap-closure.md` — Gap closure mode behavior (reads VERIFICATION.md, targeted replanning)
+- `planner-reviews.md` — Cross-AI review integration (reads REVIEWS.md from `/gsd-review`)
+- `planner-revision.md` — Plan revision patterns for iterative refinement
+
+This keeps the base planner prompt under the character budget while preserving full functionality through on-demand reference loading.
+
 ### Templates (`get-shit-done/templates/`)
 
 Markdown templates for all planning artifacts. Used by `gsd-tools.cjs template fill` and `scaffold` commands to create pre-structured files:
@@ -249,10 +259,19 @@ Wave Analysis:
 ```
 
 Each executor gets:
-- Fresh 200K context window
+- Fresh 200K context window (or up to 1M for models that support it)
 - The specific PLAN.md to execute
 - Project context (PROJECT.md, STATE.md)
 - Phase context (CONTEXT.md, RESEARCH.md if available)
+
+### Adaptive Context Enrichment (1M Models)
+
+When the context window is 500K+ tokens (1M-class models like Opus 4.6, Sonnet 4.6), subagent prompts are automatically enriched with additional context that would not fit in standard 200K windows:
+
+- **Executor agents** receive prior wave SUMMARY.md files and the phase CONTEXT.md/RESEARCH.md, enabling cross-plan awareness within a phase
+- **Verifier agents** receive all PLAN.md, SUMMARY.md, CONTEXT.md files plus REQUIREMENTS.md, enabling history-aware verification
+
+The orchestrator reads `context_window` from config (`gsd-tools.cjs config-get context_window`) and conditionally includes richer context when the value is >= 500,000. For standard 200K windows, prompts use truncated versions with cache-friendly ordering to maximize context efficiency.
 
 #### Parallel Commit Safety
 
