@@ -1,128 +1,130 @@
-# Graph Report - agents  (2026-04-11)
+# Graph Report - hooks  (2026-04-16)
 
 ## Corpus Check
-- 29 files · ~64,274 words
-- Verdict: corpus is large enough that graph structure adds value.
+- Corpus is ~3,643 words - fits in a single context window. You may not need a graph.
 
 ## Summary
-- 126 nodes · 162 edges · 15 communities detected
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.69)
+- 48 nodes · 54 edges · 14 communities detected
+- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 3 edges (avg confidence: 0.82)
 - Token cost: 0 input · 0 output
 
 ## God Nodes (most connected - your core abstractions)
-1. `GSD Verifier Agent` - 13 edges
-2. `GSD Plan Checker Agent` - 13 edges
-3. `GSD Phase Researcher Agent` - 11 edges
-4. `GSD Planner Agent` - 10 edges
-5. `GSD Intel Updater Agent` - 9 edges
-6. `GSD Eval Planner Agent` - 8 edges
-7. `GSD UI Auditor Agent` - 8 edges
-8. `GSD UI Checker Agent` - 6 edges
-9. `GSD AI Researcher Agent` - 6 edges
-10. `CLAUDE.md (Project Instructions)` - 6 edges
+1. `GSD Statusline Hook` - 12 edges
+2. `GSD Context Monitor Hook` - 11 edges
+3. `GSD Workflow Guard Hook` - 9 edges
+4. `GSD Prompt Injection Guard Hook` - 8 edges
+5. `GSD Check Update Hook` - 7 edges
+6. `GSD Read Guard Hook` - 6 edges
+7. `MANAGED_HOOKS List (canonical set of GSD hooks)` - 6 edges
+8. `Shared additionalContext Output Pattern (hook injects agent-visible text)` - 4 edges
+9. `Shared .planning/ Directory (GSD state store)` - 3 edges
+10. `readGsdState()` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `GSD Doc Verifier Agent` --semantically_similar_to--> `GSD Verifier Agent`  [INFERRED] [semantically similar]
-  agents/gsd-doc-verifier.md → agents/gsd-verifier.md
-- `GSD Assumptions Analyzer Agent` --semantically_similar_to--> `GSD Phase Researcher Agent`  [INFERRED] [semantically similar]
-  agents/gsd-assumptions-analyzer.md → agents/gsd-phase-researcher.md
-- `GSD UI Checker Agent` --semantically_similar_to--> `GSD Plan Checker Agent`  [INFERRED] [semantically similar]
-  agents/gsd-ui-checker.md → agents/gsd-plan-checker.md
-- `Calibration Tier (full_maturity / standard / minimal_decisive)` --semantically_similar_to--> `Claim Provenance (VERIFIED / CITED / ASSUMED tagging)`  [INFERRED] [semantically similar]
-  agents/gsd-advisor-researcher.md → agents/gsd-phase-researcher.md
-- `GSD Code Reviewer Agent` --semantically_similar_to--> `GSD UI Auditor Agent`  [INFERRED] [semantically similar]
-  agents/gsd-code-reviewer.md → agents/gsd-ui-auditor.md
+- `GSD Prompt Injection Guard Hook` --semantically_similar_to--> `GSD Workflow Guard Hook`  [INFERRED] [semantically similar]
+  hooks/gsd-prompt-guard.js → hooks/gsd-workflow-guard.js
+- `GSD Prompt Injection Guard Hook` --semantically_similar_to--> `GSD Read Guard Hook`  [INFERRED] [semantically similar]
+  hooks/gsd-prompt-guard.js → hooks/gsd-read-guard.js
+- `GSD Workflow Guard Hook` --semantically_similar_to--> `GSD Read Guard Hook`  [INFERRED] [semantically similar]
+  hooks/gsd-workflow-guard.js → hooks/gsd-read-guard.js
+- `GSD Statusline Hook` --shares_data_with--> `GSD Context Monitor Hook`  [EXTRACTED]
+  hooks/gsd-statusline.js → hooks/gsd-context-monitor.js
+- `GSD Statusline Hook` --shares_data_with--> `GSD Check Update Hook`  [EXTRACTED]
+  hooks/gsd-statusline.js → hooks/gsd-check-update.js
 
 ## Hyperedges (group relationships)
-- **Plan Phase Quality Loop (Planner → Plan Checker → Revision Gate)** — gsd_planner, gsd_plan_checker, concept_revision_gate, artifact_plan_md [INFERRED 0.90]
-- **Research-to-Planning Pipeline (Phase Researcher → RESEARCH.md → Planner → PLAN.md)** — gsd_phase_researcher, artifact_research_md, gsd_planner, artifact_plan_md [EXTRACTED 0.95]
-- **AI Integration Agent Cluster (Framework Selector → AI Researcher → Eval Auditor → AI-SPEC)** — gsd_framework_selector, gsd_ai_researcher, gsd_eval_auditor, artifact_ai_spec_md [INFERRED 0.85]
-- **AI Integration Phase Pipeline (Domain Research → Eval Planning → AI-SPEC)** — gsd_domain_researcher, gsd_eval_planner, gsd_eval_planner_ai_spec_md, gsd_domain_researcher_ai_spec_1b, orchestrator_gsd_ai_integration_phase [EXTRACTED 0.95]
-- **Post-Execution Audit Triad (Security + Validation + UI Review)** — gsd_security_auditor, gsd_nyquist_auditor, gsd_ui_auditor, gsd_executor_summary_md [INFERRED 0.80]
-- **Code Review and Fix Pipeline (Review → Fix → Commit)** — gsd_code_reviewer, gsd_code_fixer, gsd_doc_writer_review_md, gsd_code_fixer_review_fix_md, concept_3tier_verification [EXTRACTED 0.90]
+- **PreToolUse Advisory Guard Pattern** — gsd_promptguard_hook, gsd_readguard_hook, gsd_workflowguard_hook [EXTRACTED 0.95]
+- **Hooks that Read .planning/ for GSD State** — gsd_contextmonitor_hook, gsd_workflowguard_hook, gsd_statusline_hook [EXTRACTED 0.90]
+- **Hooks that Inject additionalContext into Agent** — gsd_contextmonitor_hook, gsd_promptguard_hook, gsd_readguard_hook, gsd_workflowguard_hook [EXTRACTED 0.95]
 
 ## Communities
 
-### Community 0 - "Shared Planning Artifacts"
-Cohesion: 0.14
-Nodes (26): Codebase Analysis Documents (.planning/codebase/), CONTEXT.md, PLAN.md, RESEARCH.md, ROADMAP.md, VERIFICATION.md, Claim Provenance (VERIFIED / CITED / ASSUMED tagging), CLAUDE.md (Project Instructions) (+18 more)
-
-### Community 1 - "Code Review & Fix Pipeline"
-Cohesion: 0.18
-Nodes (12): 3-Tier Fix Verification Strategy, Atomic Per-Task Commit Protocol, GSD Code Fixer Agent, REVIEW-FIX.md (Code Fixer Output), GSD Code Reviewer Agent, REVIEW.md (Code Reviewer Output), GSD Executor Agent, /gsd-code-review Workflow (+4 more)
-
-### Community 2 - "AI Eval & Domain Research"
-Cohesion: 0.21
-Nodes (12): Domain Rubric Ingredients, AI Eval Dimensions by System Type, GSD Domain Researcher Agent, ai-evals.md Reference (Domain Researcher), AI-SPEC.md Section 1b (Domain Context), GSD Eval Planner Agent, ai-evals.md Reference, AI-SPEC.md (Eval Planner Output) (+4 more)
-
-### Community 3 - "Research & Discussion Phase"
-Cohesion: 0.22
-Nodes (11): Research Files (.planning/research/), SUMMARY.md (Research), Calibration Tier (full_maturity / standard / minimal_decisive), Context7 MCP Documentation Tool, Discuss Phase Orchestrator, Discuss Phase Assumptions Mode, New Project Orchestrator, GSD Advisor Researcher Agent (+3 more)
-
-### Community 4 - "AI Integration Orchestration"
-Cohesion: 0.24
-Nodes (10): AI-SPEC.md, EVAL-REVIEW.md, AI Evals Reference (ai-evals.md), AI Frameworks Reference (ai-frameworks.md), AI Integration Phase Orchestrator, Eval Review Orchestrator, AI Systems Best Practices (Section 4b: Pydantic / Async / Prompt / Context / Cost), GSD AI Researcher Agent (+2 more)
-
-### Community 5 - "UI Audit & Component Safety"
-Cohesion: 0.24
-Nodes (10): 6-Pillar UI Audit Framework, Registry Safety Vetting Gate, shadcn Initialization Gate, GSD UI Auditor Agent, UI-REVIEW.md (UI Auditor Output), GSD UI Researcher Agent, UI-SPEC.md (UI Researcher Output), /gsd-ui-phase Orchestrator (+2 more)
-
-### Community 6 - "Security & Nyquist Auditing"
-Cohesion: 0.22
-Nodes (10): ASVS Levels (Security Standard), Nyquist Validation Gap Filling, SUMMARY.md (Executor Output), GSD Nyquist Auditor Agent, VALIDATION.md (Nyquist Output), GSD Security Auditor Agent, SECURITY.md (Security Auditor Output), Threat Model (PLAN.md block) (+2 more)
-
-### Community 7 - "Intel Index Maintenance"
-Cohesion: 0.22
-Nodes (9): Intel File Schemas (files/apis/deps/stack/arch), GSD Intel Updater Agent, apis.json (Intel Output), arch.md (Intel Output), deps.json (Intel Output), files.json (Intel Output), Intel Files (.planning/intel/), stack.json (Intel Output) (+1 more)
-
-### Community 8 - "Roadmap & Coverage Planning"
+### Community 0 - "Statusline State Reader"
 Cohesion: 0.29
-Nodes (7): 100% Requirement Coverage Validation, Goal-Backward Thinking Methodology, GSD Roadmapper Agent, REQUIREMENTS.md (Roadmapper I/O), ROADMAP.md (Roadmapper Output), STATE.md (Roadmapper Output), /gsd-new-project Orchestrator
+Nodes (7): Rationale: AUTO_COMPACT_BUFFER_PCT normalizes context usage to exclude reserved buffer, formatGsdState Function, GSD Statusline Hook, parseStateMd Function, readGsdState Function, Rationale: session ID path-traversal sanitization prevents writing outside tmpdir, Rationale: stdin timeout guard prevents hang on pipe issues (Windows/Git Bash)
 
-### Community 9 - "UI Pre-Execution Gate"
+### Community 1 - "Context Monitor & Bridge"
+Cohesion: 0.29
+Nodes (7): Rationale: advisory-only warnings avoid overriding user preferences (see #884), Context Critical Threshold (remaining <= 25%), Context Monitor Debounce (5 tool calls between warnings), GSD Context Monitor Hook, Context Warning Threshold (remaining <= 35%), Context Bridge File (/tmp/claude-ctx-{session}.json), Shared .planning/STATE.md (GSD workflow state)
+
+### Community 2 - "Update Checker & Config Detection"
+Cohesion: 0.33
+Nodes (6): detectConfigDir Function (multi-runtime support), GSD Check Update Hook, isNewer Semver Comparison Function, Rationale: only check MANAGED_HOOKS to ignore orphaned files from removed features (#1750), Rationale: shared ~/.cache/gsd/ avoids multi-runtime cache resolution mismatches (#1421), GSD Update Cache File (~/.cache/gsd/gsd-update-check.json)
+
+### Community 3 - "Statusline Hook (AST)"
 Cohesion: 0.5
-Nodes (4): UI-SPEC.md, UI Spec Quality Dimensions (Copywriting / Color / Typography / Spacing / Registry Safety), UI Phase Orchestrator, GSD UI Checker Agent
+Nodes (2): parseStateMd(), readGsdState()
 
-### Community 10 - "Scientific Debugging"
-Cohesion: 0.5
-Nodes (4): Scientific Method Debugging Approach, GSD Debugger Agent, common-bug-patterns.md Reference, /gsd-debug Command
+### Community 4 - "Prompt Injection Guard"
+Cohesion: 0.4
+Nodes (5): Rationale: advisory-only to prevent false-positive deadlocks on legitimate workflow operations, GSD Prompt Injection Guard Hook, Prompt Injection Detection Patterns, Invisible Unicode Character Detection, Shared .planning/ Directory (GSD state store)
 
-### Community 11 - "Integration Verification"
-Cohesion: 0.67
-Nodes (3): Cross-Phase Integration Verification, Milestone Auditor, GSD Integration Checker Agent
+### Community 5 - "Workflow Path Guard"
+Cohesion: 0.4
+Nodes (5): Workflow Guard Allowed File Patterns (config/docs exempt), Rationale: disabled by default (workflow_guard: false) to avoid friction in non-strict projects, GSD Workflow Guard Hook, Rationale: soft guard (advisory not block) so edits still proceed while nudging GSD usage, Shared .planning/config.json (GSD hook configuration)
 
-### Community 12 - "User Profiling"
-Cohesion: 0.67
-Nodes (3): GSD User Profiler Agent, 8 Behavioral Dimensions (User Profiling), user-profiling.md Reference
+### Community 6 - "Read Guard & Managed Hooks"
+Cohesion: 0.4
+Nodes (5): MANAGED_HOOKS List (canonical set of GSD hooks), Rationale: skip advisory for Claude Code which natively enforces read-before-edit (#1984), GSD Read Guard Hook, Rationale: prevents infinite retry loop on non-Claude models that skip read-before-edit, Shared additionalContext Output Pattern (hook injects agent-visible text)
 
-### Community 13 - "Documentation Writing"
-Cohesion: 0.67
-Nodes (3): Doc Tooling Adaptation (Docusaurus/VitePress/MkDocs), GSD Doc Writer Agent, /gsd-docs-update Workflow
-
-### Community 14 - "Doc Verification"
+### Community 7 - "Update Checker (AST)"
 Cohesion: 1.0
-Nodes (2): Docs Update Workflow, GSD Doc Verifier Agent
+Nodes (0): 
+
+### Community 8 - "Context Monitor (AST)"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 9 - "Prompt Guard (AST)"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 10 - "Read Guard (AST)"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 11 - "Workflow Guard (AST)"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 12 - "GSD-Aware Warning Message"
+Cohesion: 1.0
+Nodes (1): GSD-Aware Context Warning Message (references STATE.md)
+
+### Community 13 - "Non-GSD Warning Message"
+Cohesion: 1.0
+Nodes (1): Non-GSD Context Warning Message
 
 ## Knowledge Gaps
-- **60 isolated node(s):** `Discuss Phase Orchestrator`, `Discuss Phase Assumptions Mode`, `UI Phase Orchestrator`, `Milestone Auditor`, `Docs Update Workflow` (+55 more)
+- **24 isolated node(s):** `readGsdState Function`, `parseStateMd Function`, `formatGsdState Function`, `Rationale: AUTO_COMPACT_BUFFER_PCT normalizes context usage to exclude reserved buffer`, `Rationale: stdin timeout guard prevents hang on pipe issues (Windows/Git Bash)` (+19 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Doc Verification`** (2 nodes): `Docs Update Workflow`, `GSD Doc Verifier Agent`
+- **Thin community `Update Checker (AST)`** (2 nodes): `gsd-check-update.js`, `detectConfigDir()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Context Monitor (AST)`** (1 nodes): `gsd-context-monitor.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Prompt Guard (AST)`** (1 nodes): `gsd-prompt-guard.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Read Guard (AST)`** (1 nodes): `gsd-read-guard.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Workflow Guard (AST)`** (1 nodes): `gsd-workflow-guard.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `GSD-Aware Warning Message`** (1 nodes): `GSD-Aware Context Warning Message (references STATE.md)`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Non-GSD Warning Message`** (1 nodes): `Non-GSD Context Warning Message`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Context7 MCP Documentation Tool` connect `Research & Discussion Phase` to `Shared Planning Artifacts`, `AI Integration Orchestration`?**
-  _High betweenness centrality (0.078) - this node is a cross-community bridge._
-- **Why does `GSD AI Researcher Agent` connect `AI Integration Orchestration` to `Research & Discussion Phase`?**
-  _High betweenness centrality (0.053) - this node is a cross-community bridge._
-- **Why does `GSD Phase Researcher Agent` connect `Shared Planning Artifacts` to `Research & Discussion Phase`?**
-  _High betweenness centrality (0.052) - this node is a cross-community bridge._
-- **Are the 2 inferred relationships involving `GSD Verifier Agent` (e.g. with `CONTEXT.md` and `GSD Doc Verifier Agent`) actually correct?**
-  _`GSD Verifier Agent` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 2 inferred relationships involving `GSD Phase Researcher Agent` (e.g. with `PLAN.md` and `GSD Assumptions Analyzer Agent`) actually correct?**
-  _`GSD Phase Researcher Agent` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Discuss Phase Orchestrator`, `Discuss Phase Assumptions Mode`, `UI Phase Orchestrator` to the rest of the system?**
-  _60 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Shared Planning Artifacts` be split into smaller, more focused modules?**
-  _Cohesion score 0.14 - nodes in this community are weakly interconnected._
+- **Why does `GSD Statusline Hook` connect `Statusline State Reader` to `Context Monitor & Bridge`, `Update Checker & Config Detection`, `Read Guard & Managed Hooks`?**
+  _High betweenness centrality (0.215) - this node is a cross-community bridge._
+- **Why does `MANAGED_HOOKS List (canonical set of GSD hooks)` connect `Read Guard & Managed Hooks` to `Statusline State Reader`, `Context Monitor & Bridge`, `Update Checker & Config Detection`, `Prompt Injection Guard`, `Workflow Path Guard`?**
+  _High betweenness centrality (0.182) - this node is a cross-community bridge._
+- **Why does `GSD Context Monitor Hook` connect `Context Monitor & Bridge` to `Statusline State Reader`, `Prompt Injection Guard`, `Workflow Path Guard`, `Read Guard & Managed Hooks`?**
+  _High betweenness centrality (0.170) - this node is a cross-community bridge._
+- **Are the 2 inferred relationships involving `GSD Workflow Guard Hook` (e.g. with `GSD Prompt Injection Guard Hook` and `GSD Read Guard Hook`) actually correct?**
+  _`GSD Workflow Guard Hook` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 2 inferred relationships involving `GSD Prompt Injection Guard Hook` (e.g. with `GSD Workflow Guard Hook` and `GSD Read Guard Hook`) actually correct?**
+  _`GSD Prompt Injection Guard Hook` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `readGsdState Function`, `parseStateMd Function`, `formatGsdState Function` to the rest of the system?**
+  _24 weakly-connected nodes found - possible documentation gaps or missing edges._
